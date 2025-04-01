@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebQuest: Historias Interactivas con Scratch Jr. - LTP Río Bueno</title>
+    <style>
+        /* --- Estilos Generales --- */
+        body { margin: 0; padding: 20px; background-color: #f0f2f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .webquest-container { max-width: 950px; margin: 30px auto; background: linear-gradient(135deg, #ffffff, #eef2f7); border: 2px solid #fd7e14; border-radius: 15px; padding: 25px; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); overflow: hidden; }
+        .logo-container { text-align: center; margin-bottom: 20px; }
+        h1 { color: #fd7e14; text-align: center; border-bottom: 3px solid #0d6efd; padding-bottom: 10px; font-size: 2.1em; margin-top: 0; margin-bottom: 30px; }
+
+        /* --- Estilos Tabs con Colores --- */
+        .tab-buttons { display: flex; flex-wrap: wrap; margin-bottom: 20px; border-bottom: 2px solid #dee2e6; }
+        .tab-button {
+            padding: 12px 18px;
+            cursor: pointer;
+            border: none;
+            margin-right: 5px;
+            margin-bottom: -2px; /* Solapar borde inferior */
+            border-radius: 8px 8px 0 0;
+            font-size: 1em;
+            font-weight: bold;
+            color: white; /* Default text color for colored buttons */
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            border: 2px solid transparent; /* Placeholder for active border */
+            border-bottom: 2px solid #dee2e6; /* Match container border */
+        }
+
+        /* Colores específicos para cada botón */
+        .tab-button[data-tab="introduccion"] { background-color: #0d6efd; } /* Azul */
+        .tab-button[data-tab="tarea"]        { background-color: #6f42c1; } /* Morado */
+        .tab-button[data-tab="proceso"]      { background-color: #198754; } /* Verde */
+        .tab-button[data-tab="recursos"]     { background-color: #dc3545; } /* Rojo */
+        .tab-button[data-tab="evaluacion"]   { background-color: #ffc107; color: #343a40; } /* Amarillo (texto oscuro) */
+        .tab-button[data-tab="conclusion"]   { background-color: #6c757d; } /* Gris */
+
+        /* Hover states - ligeramente más oscuros/claros */
+        .tab-button[data-tab="introduccion"]:hover { background-color: #0b5ed7; }
+        .tab-button[data-tab="tarea"]:hover        { background-color: #5a379e; }
+        .tab-button[data-tab="proceso"]:hover      { background-color: #157347; }
+        .tab-button[data-tab="recursos"]:hover     { background-color: #bb2d3b; }
+        .tab-button[data-tab="evaluacion"]:hover   { background-color: #e0a800; }
+        .tab-button[data-tab="conclusion"]:hover   { background-color: #5c636a; }
+
+        /* Active state - Mantiene color de fondo, cambia borde inferior */
+        .tab-button.active {
+            border-color: #dee2e6 #dee2e6 #ffffff; /* Borde superior y laterales como contenedor, inferior blanco */
+            border-width: 2px;
+            border-style: solid;
+            position: relative; /* Asegura que esté por encima */
+            z-index: 1;
+            /* El color de fondo y texto ya están definidos por el botón específico */
+        }
+        /* Asegurar contraste texto en amarillo activo */
+        .tab-button[data-tab="evaluacion"].active { color: #343a40; }
+
+
+        /* --- Estilos Contenido Paneles (Colores Fondo) --- */
+        .tab-content { padding-top: 20px; }
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.5s ease;
+            border: 1px solid #dee2e6;
+            border-radius: 0 0 10px 10px;
+            padding: 25px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .tab-pane.active { display: block; }
+        #introduccion { background-color: #ffffff; } /* Blanco por caja descarga */
+        #tarea        { background-color: #fce4ec; /* Rosa muy pálido */ }
+        #proceso      { background-color: #e8f5e9; /* Verde muy pálido */ }
+        #recursos     { background-color: #e3f2fd; /* Azul muy pálido */ }
+        #evaluacion   { background-color: #fffde7; /* Amarillo muy pálido */ }
+        #conclusion   { background-color: #ede7f6; /* Lavanda muy pálido */ }
+
+        /* --- Estilos dentro de los paneles --- */
+        .tab-pane h2 { font-size: 1.8em; margin-top: 0; color: #0d6efd; border-bottom: 2px solid #ffc107; padding-bottom: 5px; margin-bottom: 20px; }
+        .tab-pane p, .tab-pane ul, .tab-pane ol, .tab-pane table { font-size: 1.05em; line-height: 1.7; color: #343a40; }
+        .tab-pane ul, .tab-pane ol { padding-left: 35px; }
+        .tab-pane li { margin-bottom: 12px; }
+        .tab-pane strong { color: #fd7e14; }
+        .tab-pane code { background-color: #e9ecef; padding: 2px 5px; border-radius: 4px; font-family: monospace; color: #0d6efd; font-weight: bold; }
+        .tab-pane table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .tab-pane th, .tab-pane td { padding: 12px 15px; border: 1px solid #dee2e6; vertical-align: top; text-align: left; }
+        .tab-pane thead tr { background-color: #fd7e14; color: white; }
+        .tab-pane tbody tr:nth-child(even) { background-color: #f8f9fa; }
+        .tab-pane a { color: #0a58ca; text-decoration: none; font-weight: bold; }
+        .tab-pane a:hover { text-decoration: underline; }
+        .tab-pane .table-responsive { overflow-x: auto; }
+
+        /* --- Clases para Colorear Nombres de Bloques --- */
+        .block-trigger { color: #FFB100; /* Amarillo/Naranja */ font-weight: bold; }
+        .block-motion  { color: #4C97FF; /* Azul */ font-weight: bold; }
+        .block-looks   { color: #9966FF; /* Morado */ font-weight: bold; }
+        .block-sound   { color: #CF63CF; /* Magenta/Rosa */ font-weight: bold; }
+        .block-control { color: #FFAB19; /* Naranja (similar a trigger) */ font-weight: bold; }
+        .block-end     { color: #FF691A; /* Rojo/Naranja */ font-weight: bold; }
+
+        /* --- Animación y Footer --- */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .footer-note { margin-top: 30px; text-align: center; font-size: 0.9em; color: #6c757d; }
+        .footer-note .creator { margin-top: 5px; font-style: italic; }
+        /* --- Estilo Descarga --- */
+        .download-instruction { background-color: #fff3cd; border: 1px solid #ffeeba; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; text-align: center; }
+        .download-instruction a { color: #856404; }
+
+    </style>
+</head>
+<body>
+
+<div class="webquest-container">
+
+    <!-- Logo -->
+    <div class="logo-container">
+        <img src="input_file_0.png" alt="Logo Liceo Técnico Profesional Río Bueno" width="120">
+    </div>
+
+    <h1>🚀 WebQuest: ¡Creamos Historias Interactivas con Scratch Jr.! (En Parejas) 📱💡</h1>
+
+    <!-- Botones de las Pestañas -->
+    <div class="tab-buttons">
+        <button class="tab-button active" data-tab="introduccion">✨ Introducción LTP</button>
+        <button class="tab-button" data-tab="tarea">🎯 Misión Animada</button>
+        <button class="tab-button" data-tab="proceso">👣 Pasos de Creación</button>
+        <button class="tab-button" data-tab="recursos">📚 Bloques y Ayuda</button>
+        <button class="tab-button" data-tab="evaluacion">📊 Revisión en Equipo</button>
+        <button class="tab-button" data-tab="conclusion">🏁 Conclusiones</button>
+    </div>
+
+    <!-- Contenido de las Pestañas -->
+    <div class="tab-content">
+
+        <!-- Panel Introducción -->
+        <div id="introduccion" class="tab-pane active">
+            <!-- Contenido sin cambios -->
+            <h2>✨ ¡Programar es Pensar: Dando Vida a tus Ideas!</h2>
+             <div class="download-instruction">
+                 ¡Atención! Para esta actividad, necesitarán la aplicación <strong>Scratch Jr.</strong> Es gratuita y funciona en tablets y algunos teléfonos.
+                 <br><strong>Antes de empezar, asegúrense de descargarla en sus dispositivos desde:</strong>
+                 <br><a href="https://www.scratchjr.org/" target="_blank">Sitio Oficial de Scratch Jr. (con enlaces a las tiendas de apps)</a>
+             </div>
+             <p>¡Hola, estudiantes del LTP Río Bueno! Como saben, en el mundo técnico, la <strong>lógica</strong>, la <strong>planificación</strong> y la <strong>resolución de problemas</strong> son esenciales. Hoy usaremos <strong>Scratch Jr.</strong>, una app muy sencilla y visual, para entrenar justamente esas habilidades.</p>
+             <p>Con Scratch Jr., darán instrucciones a personajes usando bloques de colores. Es más simple que Scratch normal, ideal para empezar. Al crear una pequeña animación o juego interactivo, estarán aplicando <strong>pensamiento matemático y computacional</strong> sin darse cuenta:</p>
+             <ul style="list-style-type: '🧠 '; padding-left: 30px;">
+                 <li><strong>Planificarán Secuencias:</strong> Decidir qué personaje se mueve primero, quién habla después... ¡eso es ordenar pasos lógicamente!</li>
+                 <li><strong>Entenderán Causa y Efecto:</strong> "Si toco este personaje (causa), entonces dice 'Hola' (efecto)".</li>
+                 <li><strong>Ajustarán Parámetros:</strong> Decidir cuántos pasos moverse o cuánto esperar es usar números con un propósito.</li>
+                 <li><strong>Resolverán Mini-Problemas:</strong> "¿Por qué mi personaje no habla?" -> ¡Revisar los bloques! (Debugging).</li>
+             </ul>
+             <p>Trabajarán <strong>en parejas</strong> para imaginar una escena, programarla y hacerla funcionar. ¡No se necesita experiencia, solo explorar y colaborar!</p>
+             <p>¿Listos para combinar creatividad y lógica? ¡Vamos a crear juntos! 📱🤝</p>
+        </div>
+
+        <!-- Panel Tarea -->
+        <div id="tarea" class="tab-pane">
+            <!-- Contenido sin cambios -->
+             <h2>🎯 Misión Animada: ¡Una Escena Interactiva!</h2>
+             <p><strong>En parejas</strong>, usando la app <strong>Scratch Jr.</strong>, su misión es crear un proyecto corto que cuente una pequeña historia o muestre una interacción simple. Su proyecto debe incluir:</p>
+             <ul style="list-style-type: '➡️ '; padding-left: 30px;">
+                 <li>Al menos <strong>dos personajes</strong> (sprites). Pueden elegirlos de la biblioteca o dibujarlos ustedes mismos.</li>
+                 <li><strong>Movimiento con sentido:</strong> Al menos uno de los personajes debe moverse de forma lógica en la escena (ej: acercarse a otro, moverse por el escenario).</li>
+                 <li><strong>Diálogos básicos:</strong> Los personajes deben "hablar" usando los bloques de bocadillos de texto (<code>Decir</code>).</li>
+                 <li><strong>Comandos coherentes:</strong> La secuencia de acciones y diálogos debe tener un orden lógico y empezar con un bloque de inicio (ej: <code>Al presionar Bandera Verde</code> o <code>Al tocar el personaje</code>).</li>
+                 <li><strong>Una interacción simple:</strong> Por ejemplo, un personaje se mueve y el otro responde, o algo sucede cuando tocas un personaje.</li>
+             </ul>
+             <p><strong>Ejemplos de ideas simples:</strong></p>
+              <ul style="list-style-type: '💡 '; padding-left: 30px;">
+                 <li>Dos amigos se encuentran en un parque y se saludan.</li>
+                 <li>Un gato persigue a un ratón (¡que escapa!).</li>
+                 <li>Un personaje le pregunta algo a otro, y el segundo responde.</li>
+                 <li>Un coche que se mueve por una carretera y se detiene al tocar un botón (otro sprite).</li>
+             </ul>
+             <p>¡Sean creativos, pero manténganlo simple para empezar! El foco está en lograr la interacción básica y la secuencia lógica.</p>
+        </div>
+
+        <!-- Panel Proceso -->
+        <div id="proceso" class="tab-pane">
+            <!-- Contenido sin cambios -->
+              <h2>👣 Pasos de Creación (En Pareja con Scratch Jr.)</h2>
+              <p>Sigan estos pasos en la app Scratch Jr.:</p>
+              <ol>
+                  <li><strong>Fase 1: Explorando la App 🧭 (Juntos)</strong><br>...</li>
+                  <li><strong>Fase 2: Los Protagonistas 🎭 (Decidan en Pareja)</strong><br>...</li>
+                  <li><strong>Fase 3: ¡Dando Pasos! 🚶 (Programen Juntos)</strong><br>...</li>
+                  <li><strong>Fase 4: ¡A Conversar! 💬 (Coordínense)</strong><br>...</li>
+                  <li><strong>Fase 5: La Chispa Inicial ✨ (Elijan un Inicio)</strong><br>...</li>
+                  <li><strong>Fase 6: ¡Ensamblando la Escena! 🎬 (Prueben y Ajusten)</strong><br>...</li>
+                  <li><strong>Fase 7: ¡Proyecto Terminado! 💾 (Automático)</strong><br>...</li>
+              </ol>
+         </div>
+
+        <!-- Panel Recursos con nombres de bloques coloreados -->
+        <div id="recursos" class="tab-pane">
+             <h2>📚 Bloques y Ayuda para Scratch Jr.</h2>
+             <p>Aquí tienen recursos específicos para Scratch Jr.:</p>
+             <ul style="list-style-type: '📱 '; padding-left: 30px;">
+                 <li><strong>Sitio Oficial y Descarga:</strong>
+                     <ul>
+                         <li><a href="https://www.scratchjr.org/" target="_blank">ScratchJr.org</a> (Info, guías y enlaces a tiendas de apps)</li>
+                     </ul>
+                 </li>
+                  <li><strong>Guías y Tutoriales (Buscar estos temas):</strong>
+                     <ul>
+                         <li>Guía de la interfaz de Scratch Jr.</li>
+                         <li>Tutorial básico de Scratch Jr en español.</li>
+                         <li>Cómo hacer que los personajes se muevan en Scratch Jr.</li>
+                         <li>Cómo usar el bloque 'Decir' (Say) en Scratch Jr.</li>
+                         <li>Usar bloques de inicio (Triggers) en Scratch Jr.</li>
+                          <li>Busquen en YouTube: "Tutorial Scratch Jr Español", "Primeros pasos Scratch Jr".</li>
+                     </ul>
+                 </li>
+                 <li><strong>Bloques Clave de Scratch Jr. para Explorar:</strong>
+                      <ul>
+                         <li><span class="block-trigger">Inicio</span><strong> (Amarillo):</strong> <code>Al presionar Bandera Verde</code>, <code>Al tocar el personaje</code>.</li>
+                         <li><span class="block-motion">Movimiento</span><strong> (Azul):</strong> <code>Mover Derecha/Izq/Arriba/Abajo</code>, <code>Girar Derecha/Izq</code>, <code>Saltar</code>.</li>
+                         <li><span class="block-looks">Apariencia</span><strong> (Morado):</strong> <code>Decir</code>, <code>Crecer</code>, <code>Encoger</code>, <code>Mostrar</code>, <code>Esconder</code>.</li>
+                         <li><span class="block-sound">Sonido</span><strong> (Magenta/Rosa):</strong> <code>Grabar Sonido</code> (¡pueden añadir sus voces!), <code>Pop</code>. (Opcional)</li>
+                         <li><span class="block-control">Control</span><strong> (Naranja):</strong> <code>Esperar</code>, <code>Repetir</code>.</li>
+                         <li><span class="block-end">Fin</span><strong> (Rojo):</strong> <code>Fin</code>, <code>Repetir Por Siempre</code>.</li>
+                      </ul>
+                  </li>
+                   <li><strong>Conceptos Clave (Simplificados):</strong>
+                       <ul>
+                          <li><strong>Secuencia Lógica:</strong> El orden de los bloques de izquierda a derecha determina qué pasa primero.</li>
+                          <li><strong>Paralelismo Simple:</strong> Cada personaje puede tener su propia secuencia de bloques que se ejecuta al mismo tiempo.</li>
+                          <li><strong>Interacción Básica:</strong> Usar "Al tocar" para que algo ocurra cuando el usuario interactúa.</li>
+                       </ul>
+                   </li>
+             </ul>
+        </div>
+
+        <!-- Panel Evaluación -->
+        <div id="evaluacion" class="tab-pane">
+            <!-- Contenido sin cambios -->
+             <h2>📊 Revisión en Equipo de la Escena Interactiva</h2>
+             <p>Observaremos su proyecto y cómo trabajaron juntos, valorando la aplicación de la lógica y la creatividad con las herramientas de Scratch Jr.</p>
+             <div class="table-responsive">
+                  <table>
+                     <!-- Tabla de evaluación sin cambios -->
+                     <thead><tr><th>Aspecto de la Escena</th><th>¡Bien Logrado! 👍</th><th>Se Podría Mejorar 🤔</th><th>Faltó Explorar 💡</th></tr></thead>
+                     <tbody><tr><td><strong>Uso de 2+ Personajes</strong></td><td>...</td><td>...</td><td>...</td></tr><tr><td><strong>Movimiento con Sentido</strong></td><td>...</td><td>...</td><td>...</td></tr><tr><td><strong>Uso de Diálogos (Bloque Decir)</strong></td><td>...</td><td>...</td><td>...</td></tr><tr><td><strong>Secuencia Lógica e Inicio</strong></td><td>...</td><td>...</td><td>...</td></tr><tr><td><strong>Interacción Simple</strong></td><td>...</td><td>...</td><td>...</td></tr><tr><td><strong>Colaboración en Pareja</strong></td><td>...</td><td>...</td><td>...</td></tr></tbody>
+                  </table>
+             </div>
+              <p><strong>¡Recuerden que explorar, probar y aprender juntos es el mayor éxito!</strong></p>
+         </div>
+
+         <!-- Panel Conclusión -->
+        <div id="conclusion" class="tab-pane">
+            <!-- Contenido sin cambios -->
+             <h2>🏁 ¡Pequeños Bloques, Grandes Ideas!</h2>
+             <p>¡Felicitaciones a las parejas por crear sus propias escenas interactivas con <strong>Scratch Jr.</strong>! 🎉 Han usado bloques de colores para darle vida a personajes, hacerlos moverse y hablar. ¡Eso es programar!</p>
+             <p>Aunque Scratch Jr. es sencillo, el proceso de crear su escena les hizo usar habilidades importantes del <strong>pensamiento lógico y matemático</strong>:</p>
+             <ul style="list-style-type: '✔️ '; padding-left: 30px;">
+                 <li><strong>Planificación:</strong> Tuvieron que pensar qué querían que pasara.</li>
+                 <li><strong>Secuenciación:</strong> Ordenaron los bloques para que la historia tuviera sentido.</li>
+                 <li><strong>Resolución de Problemas:</strong> Si algo no funcionaba, ¡tuvieron que descubrir por qué!</li>
+                 <li><strong>Colaboración:</strong> Trabajaron juntos para lograr un objetivo común.</li>
+             </ul>
+             <p>Estas habilidades son fundamentales en el <strong>Liceo Técnico Profesional</strong> y en cualquier camino que elijan. La capacidad de pensar de forma estructurada y resolver desafíos es clave.</p>
+             <p>Scratch Jr. permite hacer mucho más: crear historias con varias páginas (escenas), grabar sus propias voces, hacer personajes más complejos... ¡Sigan explorando si les gustó!</p>
+             <p>Lo más importante es que experimentaron cómo transformar una idea en una secuencia de instrucciones lógicas. <strong>¿Qué otras ideas se les ocurren ahora que conocen Scratch Jr.?</strong> 🤔 ¡Sigan desarrollando esa creatividad y lógica!</p>
+        </div>
+
+    </div> <!-- Fin de tab-content -->
+
+    <!-- Footer con creador -->
+    <div class="footer-note">
+        <p><em>WebQuest para Segundo Medio - Liceo Técnico Profesional de Río Bueno. ¡Programando ideas en equipo!</em></p>
+        <p class="creator">Creado por: Álvaro Barra Sáez.</p>
+    </div>
+
+</div> <!-- Fin de webquest-container -->
+
+<script>
+    // --- Script JavaScript para las pestañas (Sin cambios) ---
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+    tabButtons.forEach(button => { button.addEventListener('click', () => { const targetTab = button.getAttribute('data-tab'); tabButtons.forEach(btn => btn.classList.remove('active')); tabPanes.forEach(pane => pane.classList.remove('active')); button.classList.add('active'); const targetPane = document.getElementById(targetTab); if (targetPane) { targetPane.classList.add('active'); } }); });
+    document.addEventListener('DOMContentLoaded', () => { if (tabButtons.length > 0 && tabPanes.length > 0) { const isActiveButton = document.querySelector('.tab-button.active'); if (!isActiveButton) { tabButtons[0].classList.add('active'); const firstTabId = tabButtons[0].getAttribute('data-tab'); const firstPane = document.getElementById(firstTabId); if(firstPane) { firstPane.classList.add('active'); } } } });
+</script>
+
+</body>
+</html>
